@@ -1,25 +1,44 @@
 import "./App.css";
 import { createBrowserRouter, Outlet } from "react-router";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Vault from "../components/vault";
 import Login from "../components/login";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
+import authThunk from "../Store/authThunk";
+
+const Spinner = () => {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600"></div>
+    </div>
+  );
+};
 
 function App() {
-  const { isAuthenticated } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
 
-  useEffect(() => {
-    
-  },[isAuthenticated])
+  const auth = useSelector((state) => state.auth.checkAuth)
+    const { isAuthenticated } = useSelector((state) => state.auth);
 
-  return <>
-  <Toaster position="top-center" reverseOrder={false} />
-  {isAuthenticated ? <Outlet /> : <Login />}
-  
-  
-  
-  </>;
+
+ 
+
+
+      useEffect(() => {
+      dispatch(authThunk())
+      }, []);
+
+
+ 
+
+
+  return (
+    <>
+      <Toaster position="top-center" reverseOrder={false} />
+      {auth ? (<Spinner />) : isAuthenticated ? (<Outlet />) : (<Login />) }
+    </>
+  );
 }
 
 export const router = createBrowserRouter([
@@ -32,9 +51,9 @@ export const router = createBrowserRouter([
         element: <Vault />,
       },
       {
-        path: '/login',
-        element: <Login />
-      }
+        path: "/login",
+        element: <Login />,
+      },
     ],
   },
 ]);

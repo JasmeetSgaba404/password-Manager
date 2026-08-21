@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import CryptoJS from "crypto-js";
 import toast from "react-hot-toast";
-import { setKey } from "../Store/authSlice";
+import { setKey, setUser } from "../Store/authSlice";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -37,7 +37,8 @@ const Login = () => {
     try {
       const response = await fetch("http://localhost:5005/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json"},
+        credentials : "include",
         body: JSON.stringify({ email: login.email, password: clientHash }),
       });
 
@@ -46,11 +47,13 @@ const Login = () => {
       if (response.ok) {
         toast.success("Welcome back!");
         dispatch(setKey(clientHash));
+        dispatch(setUser(data.user))
       } else {
         toast.error(data.error || "Login failed");
       }
     } catch (error) {
       toast.error("Server connection lost");
+      console.log(error.message);
     }
   };
 
@@ -84,6 +87,7 @@ const Login = () => {
       }
     } catch (error) {
       toast.error("Network Error: Could not connect to server");
+       console.log(error.message);
     }
   };
 

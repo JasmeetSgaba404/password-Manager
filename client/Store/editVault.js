@@ -1,0 +1,31 @@
+import { createAsyncThunk } from "@reduxjs/toolkit";
+
+
+const editVault = createAsyncThunk('/vault/put/:id', async (data, thunkAPI) => {
+
+    const state = thunkAPI.getState();
+
+
+    try {
+        const response = await fetch(`/vault/${data.id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: "include",
+            body: JSON.stringify(data)
+        })
+        if (response.ok) {
+
+            const result = await response.json();
+            return result;
+        }
+
+        return thunkAPI.rejectWithValue("Something Wrong")
+
+    } catch (error) {
+        return thunkAPI.rejectWithValue(error.message)
+    }
+})
+
+export default editVault;

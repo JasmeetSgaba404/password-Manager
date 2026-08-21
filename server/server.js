@@ -6,6 +6,7 @@ import cors from 'cors';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
+import { getToken } from './authMiddleware.js';
 
 
 
@@ -74,8 +75,8 @@ app.post('/login', async (req, res) => {
         if (!isMatch) {
             return res.status(401).json({ error: "Invalid credentials" });
         }
-        
-        const token =  jwt.sign({id: user.id, email: user.email}, process.env.JWT_SECRET, {expiresIn: '24h'})
+
+        const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '24h' })
         const options = {
             httpOnly: true,
             secure: false,
@@ -87,8 +88,137 @@ app.post('/login', async (req, res) => {
         res.cookie("token", token, options);
         res.status(200).json({
             message: "Authentication successful",
-            user: { id: user.id, username: user.username, email: user.email}
+            user: { id: user.id, username: user.username, email: user.email }
         });
+
+    } catch (error) {
+        console.log(error.message)
+        res.status(500).send("server error")
+    }
+})
+
+app.get('/me', getToken, async (req, res) => {
+
+    const user_id = req.user.id;
+
+    try {
+
+        const sql = `SELECT id, username, email FROM users WHERE id = $1 `
+
+        const values = [user_id]
+
+        const result = await query(sql, values)
+
+        res.status(200).json(result?.rows[0])
+        
+    } catch (error) {
+        res.status(500).json("Invalid Credentials")
+    }
+})
+
+app.get('/vault', getToken, async (req, res) => {
+
+
+
+    const user_id = req.user.id;
+
+    try {
+
+        const sql = `  
+    SELECT vaults.*, users.username
+    FROM vaults
+    JOIN users ON vaults.user_id = users.id
+    WHERE vaults.user_id = $1`
+        const value = [user_id]
+        const result = await query(sql, value)
+
+        res.status(200).json(result?.rows);
+
+    } catch (error) {
+        res.status(500).json("ERROR")
+    }
+})
+
+
+app.post('/vault', getToken, async (req, res) => {
+    const { site_name, encrypted_password } = req.body;
+
+    const user_id = req.user.id;
+
+    console.log("reached vault")
+
+    if (!site_name || !encrypted_password) {
+        return res.status(400).json({ error: "Missing details" })
+    }
+
+    try {
+
+        const sql = `INSERT INTO vaults (site_name, encrypted_password, user_id) VALUES ($1, $2, $3) RETURNING id`
+        const values = [site_name, encrypted_password, user_id]
+        const result = await query(sql, values)
+
+        res.status(201).json(result.rows[0]);
+
+    } catch (error) {
+        console.log(error.message)
+        res.status(500).send("server error")
+    }
+})
+
+
+app.post('/logout', (req, res) => {
+
+    res.clearCookie("token");
+    res.status(200).json({ message: "Logged out successfully" });
+})
+
+app.put('/vault/:id', getToken, async (req, res) => {
+
+    const user_id = req.user.id;
+
+    const id = req.params.id;
+    const { site_name, encrypted_password } = req.body;
+
+    try {
+
+        const sql = `UPDATE vaults SET site_name = ($1), encrypted_password = ($2) WHERE id = ($3) AND user_id = ($4) RETURNING *`
+        const values = [site_name, encrypted_password, id, user_id];
+
+        const result = await query(sql, values);
+
+
+        if (result.rowCount === 1) {
+            return res.status(200).json(result.rows[0])
+        }
+
+        return res.status(404).json('entry does not exist')
+
+    } catch (error) {
+        console.log(error.message)
+        res.status(500).send("server error")
+    }
+})
+
+app.delete('/vault/:id', getToken, async (req, res) => {
+
+    const user_id = req.user.id;
+    const id = req.params.id;
+
+    try {
+
+        const sql = `DELETE FROM vaults WHERE id = ($1) AND user_id = ($2)`;
+
+        const values = [id, user_id];
+
+        const result = await query(sql, values);
+
+
+        if (result.rowCount === 1) {
+            return res.status(200).json('Delete Successfull')
+        }
+
+        return res.status(404).json('entry does not exist')
+
 
     } catch (error) {
         console.log(error.message)
