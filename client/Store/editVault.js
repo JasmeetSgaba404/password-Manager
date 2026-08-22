@@ -1,13 +1,13 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
 
-const editVault = createAsyncThunk(`${import.meta.env.VITE_API_URL}/vault/put/:id`, async (data, thunkAPI) => {
+const editVault = createAsyncThunk('/vault/put/:id', async (data, thunkAPI) => {
 
     const state = thunkAPI.getState();
 
 
     try {
-        const response = await fetch(`/vault/${data.id}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/vault/${data.id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
