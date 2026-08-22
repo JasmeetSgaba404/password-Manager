@@ -2,7 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 
 
 
-const fetchVault = createAsyncThunk("vault/fetchData", async (_, thunkAPI) => {
+const fetchVault = createAsyncThunk(`${import.meta.env.VITE_API_URL}/vault/fetchData`, async (_, thunkAPI) => {
 
     const state = thunkAPI.getState();
 

@@ -5,7 +5,7 @@ const authThunk = createAsyncThunk("auth/me", async (__, thunkAPI) => {
 
 
     try {
-        const response = await fetch('/me', {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/me`, {
             method: "GET",
             credentials: "include",
         })

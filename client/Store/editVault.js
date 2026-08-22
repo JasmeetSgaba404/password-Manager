@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
 
-const editVault = createAsyncThunk('/vault/put/:id', async (data, thunkAPI) => {
+const editVault = createAsyncThunk(`${import.meta.env.VITE_API_URL}/vault/put/:id`, async (data, thunkAPI) => {
 
     const state = thunkAPI.getState();
 

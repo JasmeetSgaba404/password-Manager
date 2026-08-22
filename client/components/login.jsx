@@ -35,7 +35,7 @@ const Login = () => {
     const clientHash = CryptoJS.SHA256(login.password).toString();
 
     try {
-      const response = await fetch("http://localhost:5005/login", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json"},
         credentials : "include",
@@ -67,7 +67,7 @@ const Login = () => {
     try {
       const hashedKey = CryptoJS.SHA256(signUp.password).toString();
 
-      const response = await fetch("http://localhost:5005/signup", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

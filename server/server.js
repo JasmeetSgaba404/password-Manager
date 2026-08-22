@@ -15,7 +15,7 @@ const app = express();
 
 app.use(cors(
     {
-        origin: "http://localhost:5173",
+        origin: process.env.FRONTEND_URL,
         credentials: true,
     }
 )); //to talk to the frontend 
@@ -77,11 +77,14 @@ app.post('/login', async (req, res) => {
         }
 
         const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '24h' })
+
+        const isProduction = process.env.NODE_ENV === "production";
+
         const options = {
             httpOnly: true,
-            secure: false,
+            secure: isProduction,
             maxAge: 86400000,
-            sameSite: 'lax',
+            sameSite: isProduction ? 'none' : 'lax',
         }
 
         // 4. Success!

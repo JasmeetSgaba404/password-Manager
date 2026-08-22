@@ -19,7 +19,7 @@ const Vault = () => {
 
 const handleLogout = async () => {
 
-  const res = await fetch("http://localhost:5005/logout", {
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/logout`, {
     method: "POST",
     credentials: "include"
   })

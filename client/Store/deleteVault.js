@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
 
-const deleteVault = createAsyncThunk('/vault/delete/:id', async (id, thunkAPI) => {
+const deleteVault = createAsyncThunk(`${import.meta.env.VITE_API_URL}/vault/delete/:id`, async (id, thunkAPI) => {
 
     const state = thunkAPI.getState();
 

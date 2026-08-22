@@ -8,7 +8,7 @@ const postVault = createAsyncThunk('/vault/post', async (data, thunkAPI) => {
 
 
     try {
-        const response = await fetch('/vault', {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/vault`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

@@ -12,7 +12,6 @@ export default defineConfig({
     '/login': 'http://localhost:5005',
     '/vault': 'http://localhost:5005',
     '/signup': 'http://localhost:5005',
-    '/me': 'http://localhost:5005',
     '/logout': 'http://localhost:5005'
   }
 }
