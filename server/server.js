@@ -85,6 +85,7 @@ app.post('/login', async (req, res) => {
             secure: isProduction,
             maxAge: 86400000,
             sameSite: isProduction ? 'none' : 'lax',
+            path: "/"
         }
 
         // 4. Success!
@@ -171,7 +172,7 @@ app.post('/vault', getToken, async (req, res) => {
 
 app.post('/logout', (req, res) => {
 
-    res.clearCookie("token");
+    res.clearCookie("token", { path: "/" });
     res.status(200).json({ message: "Logged out successfully" });
 })
 
