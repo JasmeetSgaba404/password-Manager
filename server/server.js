@@ -113,6 +113,8 @@ app.get('/me', getToken, async (req, res) => {
 
         const result = await query(sql, values)
 
+        res.set('Cache-Control', 'no-store');
+
         res.status(200).json(result?.rows[0])
         
     } catch (error) {
@@ -135,6 +137,8 @@ app.get('/vault', getToken, async (req, res) => {
     WHERE vaults.user_id = $1`
         const value = [user_id]
         const result = await query(sql, value)
+
+        res.set('Cache-Control', 'no-store');
 
         res.status(200).json(result?.rows);
 
