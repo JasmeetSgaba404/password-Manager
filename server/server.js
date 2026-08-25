@@ -176,7 +176,16 @@ app.post('/vault', getToken, async (req, res) => {
 
 app.post('/logout', (req, res) => {
 
-    res.clearCookie("token", { path: "/" });
+   const isProduction = process.env.NODE_ENV === "production";
+
+        const options = {
+            httpOnly: true,
+            secure: isProduction,
+            sameSite: isProduction ? 'none' : 'lax',
+            path: "/"
+        }
+
+    res.clearCookie("token", options);
     res.status(200).json({ message: "Logged out successfully" });
 })
 
