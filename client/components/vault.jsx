@@ -65,11 +65,15 @@ const handleLogout = async () => {
     }));
   };
 
-  const handleDelete = (e) => {
-    dispatch(deleteVault(e));
+ const handleDelete = async (e) => {
+  try {
+    await dispatch(deleteVault(e)).unwrap();
+    toast.success("Deleted successfully");
     dispatch(fetchVault());
-    toast.success("Deleted successfully")
-  };
+  } catch (error) {
+    toast.error(error.message || error);
+  }
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -113,8 +117,6 @@ const handleLogout = async () => {
 
     useEffect(() => {
     dispatch(fetchVault());
-
-    console.log(fetchVault.items)
   }, [dispatch]);
 
   return (
